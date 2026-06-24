@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Page introuvable — Épiltherm</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/webp" href="https://epiltherm.com/wp-content/uploads/2026/01/cropped-favicon-270x270.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Hanken+Grotesk:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+  :root{--noir:#14110F;--rose:#E7B4CD;--mauve:#C98AB0;--white:#fff}
+  *{margin:0;box-sizing:border-box}
+  body{
+    min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:1.6rem;text-align:center;padding:2rem;
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    background:radial-gradient(120% 90% at 70% 18%,rgba(201,138,176,.20),transparent 55%),var(--noir);
+    color:var(--white);
+  }
+  .code{
+    font-family:"Fraunces",serif;font-style:italic;font-weight:300;
+    font-size:clamp(5rem,22vw,12rem);line-height:.9;letter-spacing:-.03em;
+    background:linear-gradient(120deg,var(--rose),var(--mauve));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  h1{font-family:"Fraunces",serif;font-weight:400;font-size:clamp(1.4rem,4vw,2.2rem)}
+  p{color:rgba(255,255,255,.65);max-width:42ch}
+  .kicker{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+  a{
+    display:inline-flex;align-items:center;gap:.5em;margin-top:.6rem;
+    background:var(--white);color:var(--noir);text-decoration:none;font-weight:600;
+    padding:.9em 1.6em;border-radius:999px;transition:transform .4s cubic-bezier(.22,1,.36,1);
+  }
+  a:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+  <p class="kicker">[ Erreur 404 ]</p>
+  <div class="code">404</div>
+  <h1>Cette page s'est évaporée.</h1>
+  <p>Le lien que vous avez suivi n'existe pas ou plus. Revenons à la lumière.</p>
+  <a href="/">← Retour à l'accueil</a>
+</body>
+</html>
