@@ -177,7 +177,7 @@ ul{list-style:none}
   box-shadow:0 1px 0 var(--ink-08);
 }
 .nav__logo{display:flex;align-items:center;gap:.55rem;font-size:1.16rem;letter-spacing:-.01em}
-.nav__logoImg{height:30px;width:auto;display:block}
+.nav__logoImg{height:22px;width:auto;max-height:22px;max-width:140px;display:block;object-fit:contain}
 .nav__seed,.nav__word{display:none}
 .nav__seed{
   display:grid;place-items:center;width:30px;height:30px;border-radius:50%;
@@ -196,6 +196,7 @@ ul{list-style:none}
 }
 .nav__links a:hover{color:var(--ink)}
 .nav__links a:hover::after{width:100%}
+.nav__cta{white-space:nowrap;flex-shrink:0;padding:.6rem 1.1rem;font-size:.92rem}
 .nav__burger{
   display:none;width:42px;height:42px;border-radius:50%;
   border:1px solid var(--ink-12);background:var(--white);
