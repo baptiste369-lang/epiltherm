@@ -78,6 +78,10 @@ ul{list-style:none}
   margin-bottom:1.4rem;
 }
 .kicker--light{color:rgba(255,255,255,.62)}
+.hero__inner .kicker--light{
+  color:#E8C9E4;letter-spacing:.32em;opacity:.95;
+  text-shadow:0 1px 16px rgba(0,0,0,.3);
+}
 
 /* line-reveal masque */
 .line,.r-line{display:block;overflow:hidden}
@@ -137,6 +141,7 @@ ul{list-style:none}
 .preloader__mark{
   font-size:clamp(1.6rem,5vw,2.4rem);letter-spacing:-.01em;
 }
+.preloader__mark img{height:42px;width:auto;display:block}
 .preloader__mark .serif-it{
   background:var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent;
 }
@@ -172,6 +177,8 @@ ul{list-style:none}
   box-shadow:0 1px 0 var(--ink-08);
 }
 .nav__logo{display:flex;align-items:center;gap:.55rem;font-size:1.16rem;letter-spacing:-.01em}
+.nav__logoImg{height:30px;width:auto;display:block}
+.nav__seed,.nav__word{display:none}
 .nav__seed{
   display:grid;place-items:center;width:30px;height:30px;border-radius:50%;
   background:var(--accent);color:var(--noir);
@@ -251,7 +258,7 @@ ul{list-style:none}
 }
 .hero__vignette{
   position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:radial-gradient(120% 100% at 50% 42%,transparent 48%,rgba(20,17,15,.62) 100%);
+  background:linear-gradient(90deg,rgba(20,17,15,.45) 0%,rgba(20,17,15,.12) 38%,transparent 62%);
 }
 .hero__inner{
   position:absolute;z-index:5;inset:0;
@@ -261,13 +268,17 @@ ul{list-style:none}
 }
 .hero__title{
   font-family:var(--serif);font-weight:300;
-  font-size:clamp(2.6rem,8.2vw,7rem);line-height:.98;letter-spacing:-.02em;
-  margin-bottom:1.6rem;max-width:14ch;
+  font-size:clamp(3rem,9vw,8rem);line-height:.94;letter-spacing:-.035em;
+  margin-bottom:1.6rem;max-width:13ch;
+  color:#F5F3EE;
+  text-shadow:0 2px 40px rgba(0,0,0,.35),0 1px 3px rgba(0,0,0,.25);
 }
-.hero__title .accent-text{font-weight:400}
+.hero__title .accent-text{font-weight:400;color:#E8C9E4}
 .hero__sub{
-  max-width:34ch;font-size:clamp(1rem,1.7vw,1.22rem);
-  color:rgba(255,255,255,.78);margin-bottom:2rem;
+  max-width:38ch;font-family:var(--serif);font-weight:300;font-style:italic;
+  font-size:clamp(1.15rem,1.9vw,1.5rem);line-height:1.45;letter-spacing:.005em;
+  color:rgba(245,243,238,.9);margin-bottom:2rem;
+  text-shadow:0 1px 24px rgba(0,0,0,.35);
 }
 .hero__cta{align-self:flex-start}
 .hero__scroll{
@@ -444,7 +455,7 @@ section{position:relative}
 .price-list__dur{font-size:1.04rem;font-weight:500;white-space:nowrap}
 .price-list__dot{flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--ink-12) 0 4px,transparent 4px 8px)}
 .price-list__val{font-family:var(--serif);font-size:1.3rem;font-weight:400;white-space:nowrap}
-.pricing__cta{margin-top:1.8rem}
+.pricing__cta{margin-top:1.8rem;grid-column:2;justify-self:start}
 
 /* =====================================================================
    HISTOIRE / SOPK
@@ -583,6 +594,8 @@ section{position:relative}
 .footer__social svg{width:20px;height:20px}
 .footer__social a:hover{background:var(--white);color:var(--noir)}
 .footer__giant{padding-block:clamp(1.5rem,4vw,3rem);text-align:center;line-height:.8}
+.footer__logoImg{width:min(720px,82%);height:auto;display:block;margin-inline:auto}
+.footer__seed{display:none}
 .footer__giantFill{
   font-family:var(--serif);font-weight:400;font-style:italic;
   font-size:clamp(3.4rem,18vw,15rem);letter-spacing:-.03em;
@@ -613,6 +626,7 @@ section{position:relative}
   .stats{grid-template-columns:1fr 1fr}
   .pricing__panel,.story__grid,.faq__row,.device__row{grid-template-columns:1fr}
   .pricing__head,.faq__intro,.story__media{position:static}
+  .pricing__cta{grid-column:1}
   .step__row{grid-template-columns:1fr;gap:1.6rem}
   .step--rev .step__media{order:0}
   .footer__top{grid-template-columns:1fr 1fr}

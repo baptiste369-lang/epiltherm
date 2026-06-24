@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+.vscode/
+
+# Sources / artefacts hors site (non déployés)
+master*.mp4
+assets/*
+!assets/img/
+list.txt
