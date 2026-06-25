@@ -30,8 +30,8 @@
   /* ════════════════════════════════════════════════════════════════════
      1. HERO — préchargement des frames + scrub sur canvas
      ════════════════════════════════════════════════════════════════════ */
-  const FRAME_COUNT = 302;                 // frame_001.jpg → frame_122.jpg
-  const PAD = 3;                           // frame_%03d.jpg
+  const FRAME_COUNT = 165;                 // frame_001.webp → frame_165.jpg (coupe au contact du stylet)
+  const PAD = 3;                           // frame_%03d.webp
   const isMobile =
     window.innerWidth < 768 ||
     /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
