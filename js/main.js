@@ -39,6 +39,22 @@
   const framePath = (i) =>
     `${frameDir}/frame_${String(i + 1).padStart(PAD, '0')}.webp`;
 
+  /* Indices réels des frames à charger/afficher.
+     Desktop : toutes les frames (0…FRAME_COUNT-1).
+     Mobile  : une frame sur deux pour alléger le décodage, mais on inclut
+               TOUJOURS la dernière frame réelle (FRAME_COUNT-1 = contact stylet)
+               pour que la fin du scroll arrive bien sur ce point. */
+  const frameIndices = [];
+  if (isMobile) {
+    for (let i = 0; i < FRAME_COUNT; i += 2) frameIndices.push(i);
+    if (frameIndices[frameIndices.length - 1] !== FRAME_COUNT - 1) {
+      frameIndices.push(FRAME_COUNT - 1);
+    }
+  } else {
+    for (let i = 0; i < FRAME_COUNT; i++) frameIndices.push(i);
+  }
+  const FRAMES = frameIndices.length; // nb de frames réellement utilisées
+
   const canvas = document.getElementById('heroCanvas');
   const ctx = canvas ? canvas.getContext('2d') : null;
 
@@ -55,11 +71,27 @@
     if (prePct) prePct.textContent = v;
   };
 
-  /* dessine une frame en mode « cover » sur le canvas */
-  function drawFrame(index) {
+  /* renvoie l'image chargée la plus proche d'une position échantillonnée */
+  function nearestLoaded(pos) {
+    for (let d = 0; d < FRAMES; d++) {
+      const a = images[pos - d];
+      if (a && a.complete && a.naturalWidth) return a;
+      const b = images[pos + d];
+      if (b && b.complete && b.naturalWidth) return b;
+    }
+    return null;
+  }
+
+  let requestedPos = 0; // position échantillonnée actuellement visée
+
+  /* dessine une frame (par position échantillonnée 0…FRAMES-1) en mode « cover » */
+  function drawFrame(pos) {
     if (!canvas) { unlock(); return; }
     if (!ctx) { unlock(); return; }
-    const img = images[Math.max(0, Math.min(FRAME_COUNT - 1, index | 0))];
+    pos = Math.max(0, Math.min(FRAMES - 1, pos | 0));
+    requestedPos = pos;
+    // si la frame visée n'est pas prête, on affiche la plus proche déjà chargée
+    const img = nearestLoaded(pos);
     if (!img || !img.complete || !img.naturalWidth) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -85,19 +117,40 @@
     let settled = false;
     const finish = (ok) => { if (!settled) { settled = true; done(ok); } };
 
-    for (let i = 0; i < FRAME_COUNT; i++) {
+    /* une frame est prête : on met à jour la progression, on débloque l'entrée
+       dès la PREMIÈRE frame dessinable, et on rafraîchit l'affichage si la
+       frame chargée correspond à celle actuellement visée par le scrub. */
+    const markReady = (pos, img) => {
+      loadedCount++;
+      setProgress(loadedCount / FRAMES);
+      const drawable = img.complete && img.naturalWidth;
+      if (drawable && !settled) {
+        drawFrame(requestedPos); // dessine la frame visée (ou la plus proche)
+        finish(true);            // entrée immédiate, sans attendre le 100 %
+      } else if (drawable && pos === requestedPos) {
+        drawFrame(pos);          // « upgrade » : remplace un fallback par la bonne frame
+      }
+      if (loadedCount >= FRAMES) framesReady = true;
+    };
+
+    for (let pos = 0; pos < FRAMES; pos++) {
       const img = new Image();
-      img.onload = img.onerror = () => {
-        loadedCount++;
-        setProgress(loadedCount / FRAME_COUNT);
-        if (i === 0 && img.complete && img.naturalWidth) drawFrame(0);
-        if (loadedCount >= FRAME_COUNT) finish(true);
+      img.decoding = 'async';
+      images[pos] = img;
+      const onDone = () => markReady(pos, img);
+      img.onload = () => {
+        // décodage asynchrone : ne bloque pas le thread principal
+        if (typeof img.decode === 'function') {
+          img.decode().then(onDone).catch(onDone);
+        } else {
+          onDone();
+        }
       };
-      img.src = framePath(i);
-      images[i] = img;
+      img.onerror = onDone; // une frame en échec ne casse pas la séquence
+      img.src = framePath(frameIndices[pos]);
     }
-    // si rien ne charge en 6 s, on continue quand même (fallback noir/rose)
-    setTimeout(() => finish(images.some((im) => im.complete && im.naturalWidth)), 6000);
+    // filet de sécurité : si vraiment rien n'est dessinable, on débloque quand même
+    setTimeout(() => finish(images.some((im) => im && im.complete && im.naturalWidth)), 3000);
   }
 
   /* ════════════════════════════════════════════════════════════════════
@@ -155,11 +208,11 @@
 
     /* prefers-reduced-motion : ni pin ni scrub — dernière frame en image fixe */
     if (REDUCED || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-      drawFrame(REDUCED ? FRAME_COUNT - 1 : 0);
+      drawFrame(REDUCED ? FRAMES - 1 : 0);
       setCue(1);
       setWord(2);
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') unlock();
-      window.addEventListener('resize', () => drawFrame(REDUCED ? FRAME_COUNT - 1 : 0));
+      window.addEventListener('resize', () => drawFrame(REDUCED ? FRAMES - 1 : 0));
       return;
     }
     gsap.registerPlugin(ScrollTrigger);
@@ -170,7 +223,7 @@
 
     let lastDrawn = -1; // ne redessine que si l'index change
     gsap.to(frameState, {
-      i: FRAME_COUNT - 1,
+      i: FRAMES - 1,
       ease: 'none',
       scrollTrigger: {
         trigger: '#hero',
@@ -181,7 +234,7 @@
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const idx = Math.round(self.progress * (FRAME_COUNT - 1));
+          const idx = Math.round(self.progress * (FRAMES - 1));
           if (idx !== lastDrawn) { drawFrame(idx); lastDrawn = idx; }
           const p = self.progress;
           // fenêtres : 0-0.33 / 0.33-0.66 / 0.66-1
@@ -468,8 +521,7 @@
     // préchargement → unlock une fois prêt
     if (canvas) {
       preloadFrames((ok) => {
-        framesReady = ok;
-        drawFrame(REDUCED ? FRAME_COUNT - 1 : Math.round(frameState.i));
+        drawFrame(REDUCED ? FRAMES - 1 : Math.round(frameState.i));
         unlock();
         if (window.ScrollTrigger) ScrollTrigger.refresh();
       });
